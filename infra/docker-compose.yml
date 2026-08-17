@@ -1,0 +1,91 @@
+# D4TA Shield — full stack (Proxmox / local)
+# Option B: single compose on VM, NPM proxy → shield-web:3000 or shield-api:8000
+
+services:
+  shield-db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-shield}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-shield}
+      POSTGRES_DB: ${POSTGRES_DB:-shield}
+    volumes:
+      - shield_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-shield}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  shield-engine:
+    build:
+      context: ../packages/shield-engine
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      INTERNAL_TOKEN: ${INTERNAL_TOKEN:-dev-internal-token-change-me}
+      DATA_DIR: /data
+    volumes:
+      - shield_engine_data:/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  shield-api:
+    build:
+      context: ../apps/api
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      APP_ENV: prod
+      APP_SECRET: ${APP_SECRET:-change_me_app_secret}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-shield}:${POSTGRES_PASSWORD:-shield}@shield-db:5432/${POSTGRES_DB:-shield}?serverVersion=16&charset=utf8
+      SHIELD_ENGINE_URL: http://shield-engine:8080
+      SHIELD_INTERNAL_TOKEN: ${INTERNAL_TOKEN:-dev-internal-token-change-me}
+      JWT_SECRET_KEY: /app/config/jwt/private.pem
+      JWT_PUBLIC_KEY: /app/config/jwt/public.pem
+      JWT_PASSPHRASE: ${JWT_PASSPHRASE:-change_me_jwt_passphrase}
+      CONTRACT_STORAGE_DIR: /app/var/storage
+      CORS_ALLOW_ORIGIN: ${CORS_ALLOW_ORIGIN:-^https?://(localhost|127\.0\.0\.1|shield\.yourd4ta\.com)(:[0-9]+)?$}
+    volumes:
+      - shield_api_storage:/app/var/storage
+      - shield_api_jwt:/app/config/jwt
+    depends_on:
+      shield-db:
+        condition: service_healthy
+      shield-engine:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:8000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  shield-web:
+    build:
+      context: ../apps/web
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    depends_on:
+      shield-api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:3000/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  shield_db_data:
+  shield_engine_data:
+  shield_api_storage:
+  shield_api_jwt:
