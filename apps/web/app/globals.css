@@ -1,0 +1,82 @@
+@import "tailwindcss";
+
+@theme {
+  --color-void: #070a14;
+  --color-void2: #0b0f1f;
+  --color-indigo: #6d5bff;
+  --color-indigo-dim: rgba(109, 91, 255, 0.14);
+  --color-ink: #eef0fa;
+  --color-muted: #8991ac;
+  --color-muted-soft: #6b7290;
+  --color-risk-medium: #f5a524;
+  --color-risk-high: #f26d6d;
+  --color-glass: rgba(255, 255, 255, 0.045);
+  --color-glass-border: rgba(255, 255, 255, 0.09);
+  --font-display: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex), ui-monospace, monospace;
+  --radius-panel: 18px;
+}
+
+:root {
+  --void: #070a14;
+  --void2: #0b0f1f;
+  --indigo: #6d5bff;
+  --indigo-bg: rgba(109, 91, 255, 0.14);
+  --ink: #eef0fa;
+  --muted: #8991ac;
+  --glass: rgba(255, 255, 255, 0.045);
+  --glass-brd: rgba(255, 255, 255, 0.09);
+  --risk-medium: #f5a524;
+  --risk-high: #f26d6d;
+}
+
+body {
+  margin: 0;
+  color: var(--ink);
+  background: var(--void);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+.ambient-mesh {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 70% 50% at 15% -5%, rgba(109, 91, 255, 0.12), transparent 55%),
+    radial-gradient(ellipse 55% 40% at 90% 10%, rgba(109, 91, 255, 0.06), transparent 50%),
+    radial-gradient(ellipse 45% 35% at 60% 100%, rgba(139, 92, 246, 0.05), transparent 55%),
+    linear-gradient(180deg, #070a14 0%, #0b0f1f 50%, #070a14 100%);
+}
+
+.glass-panel {
+  background: var(--glass);
+  backdrop-filter: blur(18px);
+  border: 1px solid var(--glass-brd);
+  border-radius: var(--radius-panel);
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+.clause-highlight-alto {
+  background: rgba(242, 109, 109, 0.18);
+  border-left: 3px solid var(--risk-high);
+}
+
+.clause-highlight-medio {
+  background: rgba(245, 165, 36, 0.14);
+  border-left: 3px solid var(--risk-medium);
+}
+
+.clause-highlight-bajo {
+  background: rgba(137, 145, 172, 0.1);
+  border-left: 3px solid var(--muted);
+}
