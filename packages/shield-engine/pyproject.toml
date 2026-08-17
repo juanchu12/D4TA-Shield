@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "shield-engine"
+version = "0.1.0"
+description = "D4TA Shield — contract clause risk analysis engine"
+readme = "README-PHASE1.md"
+requires-python = ">=3.10,<3.14"
+dependencies = [
+  "fastapi>=0.115.0,<1.0.0",
+  "uvicorn[standard]>=0.30.0,<1.0.0",
+  "python-multipart>=0.0.9",
+  "prometheus-client>=0.20.0,<1.0.0",
+  "pypdf>=4.0.0,<6.0.0",
+  "pdfplumber>=0.11.0,<1.0.0",
+  "pymupdf>=1.24.0,<2.0.0",
+  "python-docx>=1.1.0,<2.0.0",
+  "pytesseract>=0.3.10,<1.0.0",
+  "Pillow>=10.0.0,<12.0.0",
+  "openai>=1.30.0",
+  "pydantic>=2.0.0,<3.0.0",
+  "pydantic-settings>=2.0.0,<3.0.0",
+  "httpx>=0.27.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0.0",
+  "pytest-asyncio>=0.23.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
