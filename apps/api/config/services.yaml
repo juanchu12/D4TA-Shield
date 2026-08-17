@@ -1,0 +1,28 @@
+parameters:
+    shield_engine_url: '%env(SHIELD_ENGINE_URL)%'
+    shield_internal_token: '%env(SHIELD_INTERNAL_TOKEN)%'
+    contract_storage_dir: '%env(resolve:CONTRACT_STORAGE_DIR)%'
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/Entity/'
+            - '../src/Kernel.php'
+
+    App\Service\EngineClient:
+        arguments:
+            $engineUrl: '%shield_engine_url%'
+            $internalToken: '%shield_internal_token%'
+
+    App\Service\ContractStorage:
+        arguments:
+            $storageDir: '%contract_storage_dir%'
+
+    App\Command\SeedDemoCommand:
+        arguments:
+            $projectDir: '%kernel.project_dir%'
