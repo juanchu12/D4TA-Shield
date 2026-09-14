@@ -24,6 +24,13 @@ const mono = IBM_Plex_Mono({
 export const metadata: Metadata = {
   title: "D4TA Shield · LegalTech",
   description: "Analista de riesgo contractual — segunda lectura antes de la firma",
+  icons: {
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/brand/badge.png", type: "image/png" },
+    ],
+    apple: "/brand/badge.png",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
