@@ -54,7 +54,7 @@ services:
       JWT_PUBLIC_KEY: /app/config/jwt/public.pem
       JWT_PASSPHRASE: ${JWT_PASSPHRASE:-change_me_jwt_passphrase}
       CONTRACT_STORAGE_DIR: /app/var/storage
-      CORS_ALLOW_ORIGIN: ${CORS_ALLOW_ORIGIN:-^https?://(localhost|127\.0\.0\.1|shield\.yourd4ta\.com)(:[0-9]+)?$}
+      CORS_ALLOW_ORIGIN: ${CORS_ALLOW_ORIGIN:-'^https://(localhost|127\.0\.0\.1|shield\.yourd4ta\.com)(:[0-9]+)?$'}
     volumes:
       - shield_api_storage:/app/var/storage
       - shield_api_jwt:/app/config/jwt
