@@ -21,6 +21,7 @@ services:
     build:
       context: ../packages/shield-engine
       dockerfile: Dockerfile
+      network: host
     restart: unless-stopped
     environment:
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
@@ -38,6 +39,8 @@ services:
     build:
       context: ../apps/api
       dockerfile: Dockerfile
+      # Host DNS — Docker bridge often can't resolve deb.debian.org on Proxmox VMs
+      network: host
     restart: unless-stopped
     ports:
       - "8000:8000"
