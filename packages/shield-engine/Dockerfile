@@ -1,15 +1,14 @@
 FROM python:3.12-slim
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    tesseract-ocr tesseract-ocr-spa tesseract-ocr-eng \
-    && rm -rf /var/lib/apt/lists/*
-
+# OCR is optional at runtime; skip tesseract packages in the image to save ~200MB+ on small VMs.
+# Re-add tesseract-ocr + spa/eng when you need scanned-PDF fallback.
 WORKDIR /app
 
 COPY pyproject.toml README-PHASE1.md ./
 COPY src ./src
 
-RUN pip install --no-cache-dir .
+RUN pip install --no-cache-dir . \
+    && rm -rf /root/.cache/pip
 
 EXPOSE 8080
 

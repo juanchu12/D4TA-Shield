@@ -1,16 +1,17 @@
-FROM php:8.3-cli-bookworm AS base
+FROM php:8.4-cli-bookworm
 
+# No intl: compiling it blows disk on small VMs and Shield doesn't need it.
 RUN apt-get update && apt-get install -y --no-install-recommends \
-        git unzip libsqlite3-dev libpq-dev libzip-dev libicu-dev curl \
-    && docker-php-ext-install -j$(nproc) pdo_sqlite pdo_pgsql intl zip opcache \
+        git unzip libpq-dev libzip-dev libsqlite3-dev curl \
+    && docker-php-ext-install -j$(nproc) pdo_pgsql pdo_sqlite zip opcache \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /app
 
-COPY composer.json ./
-RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist --ignore-platform-reqs || true
+COPY composer.json composer.lock* ./
+RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist --ignore-platform-reqs
 
 COPY . .
 RUN composer dump-autoload --optimize --classmap-authoritative \
