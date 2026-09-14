@@ -15,6 +15,7 @@ RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist --ignor
 
 COPY . .
 RUN composer dump-autoload --optimize --classmap-authoritative \
+    && printf 'APP_ENV=prod\n' > .env \
     && mkdir -p var/storage var/cache var/log config/jwt \
     && chown -R www-data:www-data var || true
 
